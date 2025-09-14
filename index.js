@@ -25,7 +25,8 @@ app.use('/uploads', express.static(path.join(import.meta.dirname, 'uploads')));
 // app.use('/uploads', express.static("./uploads"));
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: "https://students-curd.netlify.app",
+    // origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }));
