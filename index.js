@@ -1,6 +1,8 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import studentRoutes from "./routes/student.routes.js";
+import userRoutes from "./routes/users.routes.js";
+import jwtAuth from './middlewares/auth.js'
 import { MulterError } from 'multer';
 import cors from 'cors';
 import path from 'path';
@@ -8,19 +10,33 @@ import path from 'path';
 const app = express();
 
 // Database Connected
-mongoose.connect('mongodb://127.0.0.1:27017/student-curd')
+mongoose.connect(process.env.MONGODB_URL,{
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
 .then(()=> console.log('Connected To MongoDB'))
 .catch((error)=> console.log(error))
 
 // Middleware
 app.use(express.json());
-
+app.use(express.urlencoded({extended: true}));
 app.use('/uploads', express.static(path.join(import.meta.dirname, 'uploads')));
 
 // app.use('/uploads', express.static("./uploads"));
-app.use(cors());
+
+app.use(cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
+}));
+
+
+//jwt auth router
+app.use('/users', userRoutes);
+// app.use(jwtAuth);
+
 // Api Routes
-app.use('/api/students', studentRoutes);
+app.use('/students', jwtAuth ,studentRoutes);
 
 
 // Middleware
@@ -33,7 +49,7 @@ app.use((error, req, res, next)=>{
     next();
 })
 
-let PORT = process.env.PORT;
+let PORT = process.env.PORT || 4001;
 
 app.listen(PORT, ()=>{
     console.log(`server will be started ${PORT} Port`);

@@ -54,7 +54,7 @@ router.get('/:id', async (req, res) => {
 // Add New Student Data
 router.post('/', upload.single('student_photo'), async (req, res) => {
     try {
-        // const newStudent = await Student.create(req.body);
+      // const newStudent = await Student.create(req.body);
         const studentPhoto = await Student(req.body);
         if(req.file) {
             studentPhoto.student_photo = req.file.filename;
@@ -62,7 +62,7 @@ router.post('/', upload.single('student_photo'), async (req, res) => {
         const newStudent = await studentPhoto.save();
         res.status(201).json(newStudent)
     } catch (err) {
-        res.status(400).json({ message: err.message })
+        res.status(500).json({ message: err.message })
     }
 });
 
@@ -74,7 +74,6 @@ router.put('/:id',upload.single('student_photo'), async (req, res) => {
         // if (!existingStudent) return res.status(404).json({ message: "Student Data Not Found" });
         
         // duplicate Image Remove Code
-        
         if (!existingStudent) {
             if(req.file.filename){
                 const filePath = path.join('./uploads', req.file.filename)
@@ -85,7 +84,7 @@ router.put('/:id',upload.single('student_photo'), async (req, res) => {
             return res.status(404).json({ message: "Student Data Not Found" });
         }
 
-        // Image Update code ye Old Image Remove Code
+        // Image Update code
         if(req.file){
             if(existingStudent.student_photo){
                 const oldImagePath = path.join('./uploads', existingStudent.student_photo)
@@ -99,7 +98,7 @@ router.put('/:id',upload.single('student_photo'), async (req, res) => {
         const updateStudent = await Student.findByIdAndUpdate(req.params.id, req.body, { new: true });
         res.json(updateStudent);
     } catch (err) {
-        res.status(400).json({ message: err.message })
+        res.status(500).json({ message: err.message })
     }
 });
 
